@@ -2,10 +2,11 @@
 
 import { db } from "../libs/firebase.libs";
 
-export function addTodo(todo) {
+export function addTodo(title) {
   db.ref("/todos/").push({
-    todo,
+    title,
     completed: false,
+    isEdit: false,
   });
 }
 
@@ -16,8 +17,9 @@ export function getTodos() {
       snapshot.forEach((el) => {
         listTodos.push({
           completed: el.val().completed,
-          todo: el.val().todo,
+          title: el.val().title,
           id: el.key,
+          isEdit: el.val().isEdit,
         });
       });
       resolve(listTodos);
@@ -29,8 +31,14 @@ export function deleteTodo(id) {
     db.ref('/todos/' + id).remove()
 }
 
-export function editTodo(id) {
+export function completeTodo({id,completed}) {
     db.ref('/todos/').child(id).update({
-        completed: true
+        completed: !completed
+    })
+}
+
+export function editTodo({id,isEdit}) {
+    db.ref('/todos/').child(id).update({
+        isEdit: !isEdit
     })
 }
